@@ -49,32 +49,28 @@ main :: proc() {
 
 	vertexArrayObjects : u32
 	opengl.GenVertexArrays(1 , &vertexArrayObjects)
-
 	vertexBufferObject : u32
 	opengl.GenBuffers( 1, &vertexBufferObject)
-
 	elementBufferObject : u32
 	opengl.GenBuffers( 1, &elementBufferObject)
-
 
 	opengl.BindVertexArray( vertexArrayObjects )
 
 	opengl.BindBuffer( opengl.ARRAY_BUFFER, vertexBufferObject)
-	// ReCheck
 	opengl.BufferData(
 	 opengl.ARRAY_BUFFER,
 	 len(vertexData) * size_of(f32),
-	 rawptr(&vertexData[0]),
+	 raw_data(vertexData),
 	 opengl.STATIC_DRAW
 	)
+
 	opengl.BindBuffer( opengl.ELEMENT_ARRAY_BUFFER,elementBufferObject )
 	opengl.BufferData(
 		opengl.ELEMENT_ARRAY_BUFFER,
 	 	len(indices) * size_of( u32 ),
-		rawptr( &indices[0] ),
+		raw_data(indices),
 	 	opengl.STATIC_DRAW
 	);
-
 
 	opengl.VertexAttribPointer(
 		0,
@@ -84,27 +80,19 @@ main :: proc() {
 		3 * size_of(f32),
 		0
 	)
-
 	opengl.EnableVertexAttribArray(0)
 
 	opengl.BindVertexArray(0)
 
+	opengl.BindBuffer( opengl.ARRAY_BUFFER, 0)
+	opengl.BindBuffer( opengl.ELEMENT_ARRAY_BUFFER, 0 )
 
-	vertexShader ,fragmentShader :u32
-	result : bool
 
-	vertexShader 	, result = compileShader( .VERTEX_SHADER , vertexShaderSource)
-	fragmentShader 	, result = compileShader( .FRAGMENT_SHADER, fragmentShaderSource)
-	defer opengl.DeleteShader( vertexShader   )
-	defer opengl.DeleteShader( fragmentShader )
-
-	shaderProgram := opengl.CreateProgram()
-	opengl.AttachShader( shaderProgram, vertexShader)
-	opengl.AttachShader( shaderProgram, fragmentShader)
-	opengl.LinkProgram( shaderProgram )
-	opengl.UseProgram( shaderProgram )
+	shaderProgram := createShaderProgram( vertexShaderSource , fragmentShaderSource)
 	defer opengl.DeleteProgram( shaderProgram )
 
+	opengl.UseProgram( shaderProgram )
+	opengl.BindVertexArray( vertexArrayObjects )
 
 	for (!glfw.WindowShouldClose(WindowHandle)) {
 
@@ -115,8 +103,6 @@ main :: proc() {
   		opengl.ClearColor(0.1, 0.1, 0.1, 1.0)
     	opengl.Clear(opengl.COLOR_BUFFER_BIT)
 
-		opengl.UseProgram( shaderProgram )
-		opengl.BindVertexArray( vertexArrayObjects )
 
 		opengl.DrawElements( opengl.TRIANGLES,3,opengl.UNSIGNED_INT, rawptr( uintptr(0) ))
 
