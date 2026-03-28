@@ -3,7 +3,7 @@ package main
 import opengl "vendor:OpenGL"
 import glfw "vendor:glfw"
 
-import "core:strings"
+import "core:fmt"
 
 vertexShaderSource := `
 #version 460 core
@@ -42,11 +42,20 @@ main :: proc() {
 		 0	,  0.5 , 0
 	}
 
+	indices	: []u32 = {
+		0 , 1 , 2
+	}
+
+
 	vertexArrayObjects : u32
 	opengl.GenVertexArrays(1 , &vertexArrayObjects)
 
 	vertexBufferObject : u32
 	opengl.GenBuffers( 1, &vertexBufferObject)
+
+	elementBufferObject : u32
+	opengl.GenBuffers( 1, &elementBufferObject)
+
 
 	opengl.BindVertexArray( vertexArrayObjects )
 
@@ -56,7 +65,16 @@ main :: proc() {
 	 opengl.ARRAY_BUFFER,
 	 len(vertexData) * size_of(f32),
 	 rawptr(&vertexData[0]),
-	 opengl.STATIC_DRAW)
+	 opengl.STATIC_DRAW
+	)
+	opengl.BindBuffer( opengl.ELEMENT_ARRAY_BUFFER,elementBufferObject )
+	opengl.BufferData(
+		opengl.ELEMENT_ARRAY_BUFFER,
+	 	len(indices) * size_of( u32 ),
+		rawptr( &indices[0] ),
+	 	opengl.STATIC_DRAW
+	);
+
 
 	opengl.VertexAttribPointer(
 		0,
@@ -100,7 +118,7 @@ main :: proc() {
 		opengl.UseProgram( shaderProgram )
 		opengl.BindVertexArray( vertexArrayObjects )
 
-		opengl.DrawArrays( opengl.TRIANGLES,0,3)
+		opengl.DrawElements( opengl.TRIANGLES,3,opengl.UNSIGNED_INT, rawptr( uintptr(0) ))
 
 		glfw.SwapBuffers(WindowHandle)
 		glfw.PollEvents()
