@@ -3,26 +3,9 @@ package main
 import opengl "vendor:OpenGL"
 import glfw "vendor:glfw"
 
-import "core:fmt"
+vertexShaderSource := #load( "shaders/vertexShader.glsl", string)
+fragmentShaderSource := #load( "shaders/fragmentShader.glsl", string)
 
-vertexShaderSource := `
-#version 460 core
-layout (location = 0) in vec3 aPos;
-void main()
-{
-   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-}
-`
-
-fragmentShaderSource := `
-#version 460 core
-out vec4 FragColor;
-
-void main()
-{
-    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
-}
-`
 
 main :: proc() {
 	glfw.Init()
