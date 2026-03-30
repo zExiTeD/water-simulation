@@ -2,6 +2,7 @@ package main
 
 import opengl "vendor:OpenGL"
 import glfw "vendor:glfw"
+import "core:math"
 
 vertexShaderSource := #load( "shaders/vertexShader.glsl", string)
 fragmentShaderSource := #load( "shaders/fragmentShader.glsl", string)
@@ -20,9 +21,9 @@ main :: proc() {
 	opengl.load_up_to(4, 6, glfw.gl_set_proc_address)
 
 	vertexData : []f32 = {
-		-0.5, -0.5 , 0,
-		 0.5, -0.5 , 0,
-		 0	,  0.5 , 0
+		-0.5, -0.5 , 0, 1, 0, 0,
+		 0.5, -0.5 , 0, 0, 1, 0,
+		 0	,  0.5 , 0, 0, 0, 1
 	}
 
 	indices	: []u32 = {
@@ -60,10 +61,20 @@ main :: proc() {
 		3,
 		opengl.FLOAT,
 		opengl.FALSE,
-		3 * size_of(f32),
+		6 * size_of(f32),
 		0
 	)
 	opengl.EnableVertexAttribArray(0)
+	opengl.VertexAttribPointer(
+		1,
+		3,
+		opengl.FLOAT,
+		opengl.FALSE,
+		6 * size_of(f32),
+		3 * size_of(f32)
+	)
+	opengl.EnableVertexAttribArray(1)
+
 
 	opengl.BindVertexArray(0)
 
@@ -85,6 +96,10 @@ main :: proc() {
 
   		opengl.ClearColor(0.1, 0.1, 0.1, 1.0)
     	opengl.Clear(opengl.COLOR_BUFFER_BIT)
+
+     	alpha := ( math.sin( glfw.GetTime() ) / 2 ) + 0.5
+        uniformLocation := opengl.GetUniformLocation( shaderProgram, "alphaColor")
+        opengl.Uniform4f( uniformLocation, 1.0, 1, 1, cast(f32)alpha)
 
 
 		opengl.DrawElements( opengl.TRIANGLES,3,opengl.UNSIGNED_INT, rawptr( uintptr(0) ))

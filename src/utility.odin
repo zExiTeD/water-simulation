@@ -20,8 +20,8 @@ compileShader :: proc(shaderType: opengl.Shader_Type, shaderSource: string) -> (
 }
 
 createShaderProgram :: proc(vertexShaderSource, fragmentShaderSource: string) -> u32 {
-	vertexShader, _ := compileShader(.VERTEX_SHADER, vertexShaderSource)
-	fragmentShader, _ := compileShader(.FRAGMENT_SHADER, fragmentShaderSource)
+	vertexShader,_	 := compileShader(.VERTEX_SHADER, vertexShaderSource)
+	fragmentShader,_ := compileShader(.FRAGMENT_SHADER, fragmentShaderSource)
 
 	defer opengl.DeleteShader(vertexShader)
 	defer opengl.DeleteShader(fragmentShader)
