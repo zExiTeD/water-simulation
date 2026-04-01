@@ -2,6 +2,7 @@
 
 uniform vec4 alphaColor;
 in  vec3 attributeColor;
+
 out vec4 FragColor;
 
 void main() {

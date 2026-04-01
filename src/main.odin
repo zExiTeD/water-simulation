@@ -10,6 +10,8 @@ fragmentShaderSource := #load( "shaders/fragmentShader.glsl", string)
 
 main :: proc() {
 	glfw.Init()
+	defer glfw.Terminate()
+
 	glfw.WindowHint(glfw.CONTEXT_VERSION_MAJOR, 4)
 	glfw.WindowHint(glfw.CONTEXT_VERSION_MINOR, 6)
 	glfw.WindowHint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
@@ -75,12 +77,10 @@ main :: proc() {
 	)
 	opengl.EnableVertexAttribArray(1)
 
-
 	opengl.BindVertexArray(0)
 
 	opengl.BindBuffer( opengl.ARRAY_BUFFER, 0)
 	opengl.BindBuffer( opengl.ELEMENT_ARRAY_BUFFER, 0 )
-
 
 	shaderProgram := createShaderProgram( vertexShaderSource , fragmentShaderSource)
 	defer opengl.DeleteProgram( shaderProgram )
@@ -107,6 +107,4 @@ main :: proc() {
 		glfw.SwapBuffers(WindowHandle)
 		glfw.PollEvents()
 	}
-
-	glfw.Terminate()
 }
